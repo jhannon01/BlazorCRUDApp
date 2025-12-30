@@ -1,0 +1,32 @@
+﻿@page "/add-song"
+@inject SongService SongService
+@using BlazorCRUDApp.Components.Entities
+@using BlazorCRUDApp.Services
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3>Add a New Song</h3>
+
+<EditForm FormName="form" Model="song" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label>Title:</label>
+        <InputText @bind-Value="song.Title" />
+    </div>
+    <div>
+        <label>Artist:</label>
+        <InputText @bind-Value="song.Artist" />
+    </div>
+
+    <button type="submit">Add Song</button>
+</EditForm>
+
+@code {
+    private Song song = new();
+
+    private async Task HandleValidSubmit()
+    {
+        await SongService.Add(song);
+        song = new(); // Reset form
+    }
+}

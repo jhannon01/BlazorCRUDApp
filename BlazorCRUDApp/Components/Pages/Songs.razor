@@ -1,0 +1,40 @@
+﻿@using BlazorCRUDApp.Components.Entities
+@using BlazorCRUDApp.Services
+@page "/songs"
+@inject SongService SongService;
+@inject NavigationManager NavigationManager
+
+<h3>Songs</h3>
+<button onclick="Add">hi</button>
+
+<table>
+    <thead><tr><th>Title</th><th>Artist</th></tr></thead>
+    <tbody>
+        @foreach (var p in songs)
+        {
+            <tr>
+                <td>@p.Title</td>
+                <td>@p.Artist</td>
+                <td>
+                    <button @onclick="() => Edit(p.Id)">Edit</button>
+                    <button @onclick="() => Delete(p.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Song> songs = new();
+    protected override async Task OnInitializedAsync()
+    {
+        songs = await SongService.GetAll();
+    }
+
+    void Edit(int id) { /* navigate to edit page */ }
+    void Delete(int id) { /* delete product */ }
+    void NavigateToAdd()
+    {
+        NavigationManager.NavigateTo("/add");
+    }
+}
