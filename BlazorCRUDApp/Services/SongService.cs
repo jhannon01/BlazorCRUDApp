@@ -1,6 +1,6 @@
 ﻿using BlazorCRUDApp.Data;
-using BlazorCRUDApp.Components.Entities;
 using Microsoft.EntityFrameworkCore;
+using BlazorCRUDApp.Entities;
 
 namespace BlazorCRUDApp.Services
 {

@@ -1,11 +1,10 @@
-﻿@using BlazorCRUDApp.Components.Entities
+﻿@using BlazorCRUDApp.Entities
 @using BlazorCRUDApp.Services
 @page "/songs"
-@inject SongService SongService;
+@inject SongService SongService
 @inject NavigationManager NavigationManager
 
 <h3>Songs</h3>
-<button onclick="Add">hi</button>
 
 <table>
     <thead><tr><th>Title</th><th>Artist</th></tr></thead>
@@ -33,8 +32,4 @@
 
     void Edit(int id) { /* navigate to edit page */ }
     void Delete(int id) { /* delete product */ }
-    void NavigateToAdd()
-    {
-        NavigationManager.NavigateTo("/add");
-    }
 }
