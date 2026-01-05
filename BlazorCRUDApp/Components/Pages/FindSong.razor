@@ -1,5 +1,6 @@
 ﻿@page "/find-song"
 @inject LibraryService LibraryService
+@inject SongService SongService
 @using BlazorCRUDApp.Entities
 @using BlazorCRUDApp.Services
 @using Microsoft.AspNetCore.Components.Forms
@@ -33,6 +34,10 @@
                 <tr>
                     <td class="pe-md-3">@s.Title</td>
                     <td>@s.Artist</td>
+                    <button class="ms-lg-2" type="button" @onclick="() => AddSong(s)">Add Song</button>
+                    @if (songAdded) {
+                        <span class="ps-2">Song Added!</span>
+                    }
                 </tr>
             }
         </tbody>
@@ -51,6 +56,7 @@ else if (clicked && searchModel.Title != "")
     private SongSearchModel searchModel = new();
     private List<LibrarySong> songs = new List<LibrarySong>();
     private Boolean clicked = false;
+    private Boolean songAdded = false;
 
     private async Task HandleSearch()
     {
@@ -62,5 +68,16 @@ else if (clicked && searchModel.Title != "")
     {
         searchModel.Title = value;
         clicked = false;
+        songAdded = false;
+    }
+
+    private  async Task AddSong(LibrarySong song)
+    {
+        await SongService.Add(new Song
+        {
+            Title = song.Title,
+            Artist = song.Artist
+        });
+        songAdded = true;
     }
 }

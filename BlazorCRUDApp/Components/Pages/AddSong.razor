@@ -7,21 +7,33 @@
 <h3>Add a New Song</h3>
 
 <EditForm FormName="songForm" Model="@song" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-
-        <InputText @bind-Value="song.Title" />
+        <InputText 
+        ValueChanged="OnValueChange" 
+        ValueExpression="() => song.Title"/>
         <InputText @bind-Value="song.Artist" />
 
     <button type="submit">Add Song</button>
 </EditForm>
 
+@if (songAdded)
+{
+    <span>Song Added!</span>
+}
+
 @code {
     private Song song = new();
+    private Boolean songAdded = false;
 
     private async Task HandleValidSubmit()
     {
-        Console.WriteLine($"Title: {song.Title}, Artist: {song.Artist}");
         await SongService.Add(song);
-        song = new(); // Reset form
+        song = new();
+        songAdded = true;
+    }
+
+    private void OnValueChange(string value)
+    {
+        song.Title = value;
+        songAdded = false;
     }
 }
