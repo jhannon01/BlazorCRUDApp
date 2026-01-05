@@ -1,0 +1,83 @@
+﻿@page "/find-song"
+@inject LibraryService LibraryService
+@inject SongService SongService
+@using BlazorCRUDApp.Entities
+@using BlazorCRUDApp.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Collections
+
+<PageTitle>Find a Song</PageTitle>
+
+<h3 class="pb-3">Find a Song From the Music Interactive Database</h3>
+
+<EditForm FormName="findSong" Model="@searchModel" OnValidSubmit="HandleSearch">
+    <InputText 
+        ValueChanged="OnValueChange" 
+        ValueExpression="() => searchModel.Title" 
+    />
+
+    <button type="submit">Search</button>
+</EditForm>
+
+@if (searchModel.Title != "" && songs.Count != 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th class="pt-3">Title</th>
+                <th class="pt-3">Artist</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in songs)
+            {
+                <tr>
+                    <td class="pe-md-3">@s.Title</td>
+                    <td>@s.Artist</td>
+                    <button class="ms-lg-2" type="button" @onclick="() => AddSong(s)">Add Song</button>
+                    @if (songAdded) {
+                        <span class="ps-2">Song Added!</span>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (clicked && searchModel.Title == "")
+{
+    <p class="pt-3">Please enter a song title</p>
+}
+else if (clicked && searchModel.Title != "")
+{
+<p class="pt-3">No results found</p>
+}
+
+@code {
+    private SongSearchModel searchModel = new();
+    private List<LibrarySong> songs = new List<LibrarySong>();
+    private Boolean clicked = false;
+    private Boolean songAdded = false;
+
+    private async Task HandleSearch()
+    {
+        clicked = true;
+        songs = await LibraryService.SearchByTitle(searchModel.Title);
+    }
+
+    private void OnValueChange (string value)
+    {
+        searchModel.Title = value;
+        clicked = false;
+        songAdded = false;
+    }
+
+    private  async Task AddSong(LibrarySong song)
+    {
+        await SongService.Add(new Song
+        {
+            Title = song.Title,
+            Artist = song.Artist
+        });
+        songAdded = true;
+    }
+}

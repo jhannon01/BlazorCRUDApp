@@ -1,0 +1,38 @@
+﻿@using BlazorCRUDApp.Entities
+@using BlazorCRUDApp.Services
+@inject SongService SongService
+
+<div class="dialog">
+    <EditForm FormName="editForm" Model="editSong" OnValidSubmit="SaveUpdate">
+        <InputText @bind-Value="editSong.Title" />
+        <InputText @bind-Value="editSong.Artist" />
+        <button type="submit">Save</button>
+        <button type="button" @onclick="Close">Close</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public Song Song { get; set; } = default!;
+    [Parameter] public EventCallback<Song> OnSaved { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    public Song editSong = new();
+
+    protected override void OnParametersSet()
+    {
+        editSong = new Song
+        {
+            Id = Song.Id,
+            Title = Song.Title,
+            Artist = Song.Artist
+        };
+    }
+    private async Task SaveUpdate()
+    {
+        await SongService.Update(editSong); 
+        await Close();
+    }
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+}
