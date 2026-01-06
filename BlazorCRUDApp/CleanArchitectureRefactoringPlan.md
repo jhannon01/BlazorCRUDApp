@@ -4,8 +4,8 @@ This plan outlines the steps to refactor the existing BlazorCRUDApp into a Clean
 
 ## Project Structure Overview
 
--  **BlazorCRUDApp.Core**: Contains entities, interfaces, and core business logic.
--  **BlazorCRUDApp.Infrastructure**: Handles data access, migrations, and external services.
+-  **BlazorCRUDApp.Core**: Contains entities, interfaces, and core business logic services.
+-  **BlazorCRUDApp.Infrastructure**: Handles data access, migrations, and external services (repository implementations).
 -  **BlazorCRUDApp.Web**: The Blazor WebAssembly/Server app with pages and components.
 
 ## Step-by-Step Refactoring Plan
@@ -31,47 +31,59 @@ This plan outlines the steps to refactor the existing BlazorCRUDApp into a Clean
 -  Extract interfaces from services:
    -  Create `ISongService.cs` with methods like `Task<List<Song>> GetAll()`, `Task Add(Song song)`, etc.
    -  Create `ILibraryService.cs` with methods like `Task<List<LibrarySong>> SearchByTitle(string title)`.
--  Move service logic to implementations in Infrastructure.
+-  Define repository interfaces for data access:
+   -  Create `ISongRepository.cs` with methods like `Task<List<Song>> GetAllAsync()`, `Task AddAsync(Song song)`, etc.
+   -  Create `ILibraryRepository.cs` with methods like `Task<List<LibrarySong>> SearchByTitleAsync(string title)`.
 
-### 4. Move Data and Services to Infrastructure
+### 4. Create Business Logic Services in Core
+
+-  Create `Services` folder in `BlazorCRUDApp.Core`.
+-  Create `SongService.cs` and `LibraryService.cs` in `BlazorCRUDApp.Core/Services/`.
+-  Implement `ISongService` and `ILibraryService` in these classes.
+-  These services will contain the business logic and depend on repository interfaces (e.g., `ISongRepository` and `ILibraryRepository`).
+-  Update namespaces to `BlazorCRUDApp.Core.Services`.
+
+### 5. Move Data and Implement Repositories in Infrastructure
 
 -  Create `Data` folder in `BlazorCRUDApp.Infrastructure`.
 -  Move `Data/AppDbContext.cs` to `BlazorCRUDApp.Infrastructure/Data/`.
 -  Move `Migrations` folder to `BlazorCRUDApp.Infrastructure/Migrations/`.
--  Create `Services` folder in `BlazorCRUDApp.Infrastructure`.
--  Move `Services/SongService.cs` and `Services/LibraryService.cs` to `BlazorCRUDApp.Infrastructure/Services/`.
--  Implement the interfaces from Core in these services.
--  Update namespaces to `BlazorCRUDApp.Infrastructure.Services` and `BlazorCRUDApp.Infrastructure.Data`.
+-  Create `Repositories` folder in `BlazorCRUDApp.Infrastructure`.
+-  Create `SongRepository.cs` and `LibraryRepository.cs` in `BlazorCRUDApp.Infrastructure/Repositories/`.
+-  Implement `ISongRepository` and `ILibraryRepository` in these classes using `AppDbContext`.
+-  Update namespaces to `BlazorCRUDApp.Infrastructure.Data` and `BlazorCRUDApp.Infrastructure.Repositories`.
 
-### 5. Move UI Components to Web
+### 6. Move UI Components to Web
 
 -  Move `Components`, `Pages`, `Layout`, `Helpers`, and `Routes` folders to `BlazorCRUDApp.Web/Components/`.
 -  Move `wwwroot` and `wwwroot/app.css` to `BlazorCRUDApp.Web/wwwroot/`.
 -  Update `Program.cs` in `BlazorCRUDApp.Web` to register services from Infrastructure.
 -  Add project references: `BlazorCRUDApp.Web` references `BlazorCRUDApp.Core` and `BlazorCRUDApp.Infrastructure`.
 
-### 6. Update Dependencies and Configurations
+### 7. Update Dependencies and Configurations
 
 -  In `Program.cs`, add:
    ```csharp
+   builder.Services.AddScoped<ISongRepository, SongRepository>();
+   builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
    builder.Services.AddScoped<ISongService, SongService>();
    builder.Services.AddScoped<ILibraryService, LibraryService>();
    ```
 -  Ensure `appsettings.json` and connection strings are in `BlazorCRUDApp.Web`.
 -  Update all `@using` directives in Razor files to reference the new namespaces (e.g., `BlazorCRUDApp.Core.Entities`).
 
-### 7. Handle Shared Code
+### 8. Handle Shared Code
 
 -  Move shared utilities (if any) to `BlazorCRUDApp.Core`.
 -  Update any cross-references between projects.
 
-### 8. Testing and Validation
+### 9. Testing and Validation
 
 -  Build and run the solution.
 -  Test CRUD operations in `Components/Pages/Songs.razor`, `Components/Pages/AddSong.razor`, and `Components/Pages/FindSong.razor`.
 -  Verify migrations work with `dotnet ef database update` in Infrastructure.
 
-### 9. Final Cleanup
+### 10. Final Cleanup
 
 -  Remove old files from the root project.
 -  Update `.gitignore` and build scripts as needed.

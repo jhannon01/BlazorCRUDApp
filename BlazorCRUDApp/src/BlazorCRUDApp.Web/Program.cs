@@ -1,7 +1,8 @@
 using BlazorCRUDApp.Web.Components;
 using BlazorCRUDApp.Core.Interfaces;
+using BlazorCRUDApp.Core.Services;
 using BlazorCRUDApp.Infrastructure.Data;
-using BlazorCRUDApp.Infrastructure.Services;
+using BlazorCRUDApp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<ISongRepository, SongRepository>();
+builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
 builder.Services.AddScoped<ISongService, SongService>();
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 
