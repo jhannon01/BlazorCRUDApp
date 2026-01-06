@@ -1,15 +1,16 @@
 ﻿@using BlazorCRUDApp.Core.Entities
 @using BlazorCRUDApp.Core.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
 @inject ISongService SongService
 
-<div class="dialog">
+<dialog class="mt-4 w-50" open>
     <EditForm FormName="editForm" Model="editSong" OnValidSubmit="SaveUpdate">
         <InputText @bind-Value="editSong.Title" />
         <InputText @bind-Value="editSong.Artist" />
         <button type="submit">Save</button>
         <button type="button" @onclick="Close">Close</button>
     </EditForm>
-</div>
+</dialog>
 
 @code {
     [Parameter] public Song Song { get; set; } = default!;

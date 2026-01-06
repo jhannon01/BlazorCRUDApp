@@ -1,7 +1,7 @@
-﻿@using BlazorCRUDApp.Core.Entities
+﻿@page "/songs"
+@using BlazorCRUDApp.Core.Entities
 @using BlazorCRUDApp.Core.Interfaces
 @using BlazorCRUDApp.Web.Components.Helpers
-@page "/songs"
 @inject ISongService SongService
 @inject NavigationManager NavigationManager
 
@@ -26,10 +26,10 @@
 
 @if (editClicked && songParameter != null)
 {
-        <EditDialog 
-            Song="songParameter"
-            OnClose="HandleCloseDialog">
-        </EditDialog>
+            <EditDialog 
+                Song="songParameter"
+                OnClose="HandleCloseDialog">
+            </EditDialog>
 }
 
 @code {
