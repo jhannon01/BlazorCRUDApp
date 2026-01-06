@@ -1,8 +1,8 @@
-using BlazorCRUDApp.Components;
-using BlazorCRUDApp.Data;
+using BlazorCRUDApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using BlazorCRUDApp.Services;
 using Toolbelt.Extensions.DependencyInjection;
+using BlazorCRUDApp.src.BlazorCRUDApp_Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
